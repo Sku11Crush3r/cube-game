@@ -1,20 +1,62 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{32C3BDE6-E125-3128-82C1-25D0441455A3}"
-EndProject
-Global
-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Any CPU = Debug|Any CPU
-		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{32C3BDE6-E125-3128-82C1-25D0441455A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{32C3BDE6-E125-3128-82C1-25D0441455A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{32C3BDE6-E125-3128-82C1-25D0441455A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{32C3BDE6-E125-3128-82C1-25D0441455A3}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
-	EndGlobalSection
-EndGlobal
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class cubemovement : MonoBehaviour
+{
+    public float speed_of_rotation = 40f;
+    public float Speed_of_sizeChange = 2f;
+    public float max_size = 10f;
+
+    private bool isGameStarted = false;
+    public float countdownTime = 3f;
+    public float total_gameTime = 50f; 
+    private float currentTime;
+    void Start()
+    {
+        currentTime = total_gameTime;
+    }
+
+    void Update()
+    {
+        if (isGameStarted)
+        {
+            currentTime -= Time.deltaTime;
+
+            if (currentTime <= 0f)
+            {
+                isGameStarted = false;
+                print("Game Over!");
+            }
+
+            float horizontal = Input.GetAxis("Horizontal");
+            float vertical = Input.GetAxis("Vertical");
+            transform.Rotate(new Vector3(vertical, horizontal, 0f) * speed_of_rotation * Time.deltaTime);
+
+            if (Input.GetKey(KeyCode.Space))
+            {
+                float newSize = Mathf.Clamp(transform.localScale.x + Speed_of_sizeChange * Time.deltaTime, 1f, max_size);
+                transform.localScale = new Vector3(newSize, newSize, newSize);
+            }
+            else
+            {
+                float newSize = Mathf.Clamp(transform.localScale.x - Speed_of_sizeChange * Time.deltaTime, 1f, max_size);
+                transform.localScale = new Vector3(newSize, newSize, newSize);
+            }
+        }
+        else
+        {
+            if (countdownTime > 0f)
+            {
+                countdownTime -= Time.deltaTime;
+                print("Countdown: " + Mathf.CeilToInt(countdownTime));
+            }
+            else
+            {
+                isGameStarted = true;
+                print("Game Started!");
+            }
+        }
+    }
+}
+
